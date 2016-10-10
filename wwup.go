@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"golang.org/x/sys/unix"
+	"log"
 	"os"
+	"os/exec"
 )
 
 func main() {
@@ -33,38 +35,53 @@ func main() {
 	/* Resource limits */
 	var olim unix.Rlimit
 	err = unix.Getrlimit(unix.RLIMIT_NOFILE, &olim)
-	if err == nil {
-		fmt.Printf("Now Current File Number Limit is %v.\n", olim.Cur)
-		fmt.Printf("Now Maximum File Number Limit is %v.\n", olim.Max)
+	if err != nil {
+		log.Fatal(err)
 	}
+	fmt.Printf("Now Current File Number Limit is %v.\n", olim.Cur)
+	fmt.Printf("Now Maximum File Number Limit is %v.\n", olim.Max)
 
 	nlim := unix.Rlimit{4096, 4096}
 	err = unix.Setrlimit(unix.RLIMIT_NOFILE, &nlim)
-	if err == nil {
-		var rlim unix.Rlimit
-		err = unix.Getrlimit(unix.RLIMIT_NOFILE, &rlim)
-		if err == nil {
-			fmt.Printf("New current File Number Limit is %v.\n", rlim.Cur)
-			fmt.Printf("New maximum File Number Limit is %v.\n", rlim.Max)
-		}
+	if err != nil {
+		log.Fatal(err)
 	}
+	var rlim unix.Rlimit
+	err = unix.Getrlimit(unix.RLIMIT_NOFILE, &rlim)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("New current File Number Limit is %v.\n", rlim.Cur)
+	fmt.Printf("New maximum File Number Limit is %v.\n", rlim.Max)
 
 	err = unix.Setrlimit(unix.RLIMIT_NOFILE, &olim)
-	if err == nil {
-		var rlim unix.Rlimit
-		err = unix.Getrlimit(unix.RLIMIT_NOFILE, &rlim)
-		if err == nil {
-			fmt.Printf("Now current File Number Limit is %v.\n", rlim.Cur)
-			fmt.Printf("Now maximum File Number Limit is %v.\n", rlim.Max)
-		}
+	if err != nil {
+		log.Fatal(err)
 	}
+	err = unix.Getrlimit(unix.RLIMIT_NOFILE, &rlim)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Now current File Number Limit is %v.\n", rlim.Cur)
+	fmt.Printf("Now maximum File Number Limit is %v.\n", rlim.Max)
 	fmt.Println()
 
 	/* Environment variables */
 	err = os.Setenv("FOO", "foo")
-	if err == nil {
-		fmt.Printf("The value of FOO is %v.\n", os.Getenv("FOO"))
-		os.Unsetenv("FOO")
+	if err != nil {
+		log.Fatal(err)
 	}
+	fmt.Printf("The value of FOO is %v.\n", os.Getenv("FOO"))
+	os.Unsetenv("FOO")
+	fmt.Println()
+
+	/* Create new process */
+	cmd := exec.Command("sleep", "5")
+	err = cmd.Start()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Waiting for sleep command to finish.")
+	err = cmd.Wait()
 	fmt.Println()
 }
