@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/signal"
+	"sync"
 )
 
 func main() {
@@ -87,4 +89,23 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println()
+
+	/* Process signal */
+	var wg sync.WaitGroup
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, unix.SIGUSR1)
+	wg.Add(1)
+
+	go func(sigs chan os.Signal, wg *sync.WaitGroup) {
+		<-sigs
+		fmt.Printf("Signal SIGUSR1 is catched\n")
+		wg.Done()
+	}(sigs, &wg)
+
+	err = unix.Kill(os.Getpid(), unix.SIGUSR1)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	wg.Wait()
 }
