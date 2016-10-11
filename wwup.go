@@ -109,4 +109,23 @@ func main() {
 	}
 
 	wg.Wait()
+
+	/* Pipe */
+	buf := make([]byte, 32)
+	r, w, err := os.Pipe()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	w.Write([]byte("Data is sent to pipe."))
+	w.Close()
+
+	_, err = r.Read(buf)
+	if err != nil {
+		log.Fatal(err)
+	}
+	r.Close()
+
+	fmt.Printf("%s\n", string(buf))
+	fmt.Println()
 }
