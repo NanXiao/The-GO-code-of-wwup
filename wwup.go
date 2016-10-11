@@ -98,7 +98,8 @@ func main() {
 
 	go func(sigs chan os.Signal, wg *sync.WaitGroup) {
 		<-sigs
-		fmt.Printf("Signal SIGUSR1 is catched\n")
+		fmt.Printf("Signal SIGUSR1 is catched.\n")
+		fmt.Println()
 		wg.Done()
 	}(sigs, &wg)
 
