@@ -83,5 +83,8 @@ func main() {
 	}
 	fmt.Printf("Waiting for sleep command to finish.")
 	err = cmd.Wait()
+	if err != nil {
+		log.Fatal(err)
+	}
 	fmt.Println()
 }
