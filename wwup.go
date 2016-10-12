@@ -25,8 +25,8 @@ func main() {
 
 	/* File descriptors */
 	fmt.Printf("File descriptor of stdin is %v.\n", os.Stdin.Fd())
-	fmt.Printf("File descriptor of stdin is %v.\n", os.Stdout.Fd())
-	fmt.Printf("File descriptor of stdin is %v.\n", os.Stderr.Fd())
+	fmt.Printf("File descriptor of stdout is %v.\n", os.Stdout.Fd())
+	fmt.Printf("File descriptor of stderr is %v.\n", os.Stderr.Fd())
 	file, err := os.Open("./wwup.go")
 	if err == nil {
 		fmt.Printf("File descriptor of file is %v.\n", file.Fd())
